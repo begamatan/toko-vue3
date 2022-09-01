@@ -1,13 +1,30 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
-import { useStore } from '@/store/main'
+  import { RouterLink, RouterView } from "vue-router";
+  import axios from 'axios'
+  import { useStore } from '@/store/main'
 
-const store = useStore()
-store.setCart()
+  const store = useStore()
+  store.setCart()
+
+  axios.interceptors.request.use(function (config) {
+      // alert('request')
+      store.setLoading(true)
+      return config;
+    }, function (error) {
+      return Promise.reject(error);
+  });
+
+  axios.interceptors.response.use(function (config) {
+    store.setLoading(false)
+    // alert('response')
+    return config;
+  }, function (error) {
+    return Promise.reject(error);
+  });
 </script>
 
 <template>
-  <div id="wrapper">
+  <div id="wrapper" :class="{'overlay': store.isLoading}">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
         <router-link class="navbar-brand" to="/">
@@ -42,7 +59,54 @@ store.setCart()
       </div>
     </nav>
     <section>
+      <div class="overlay__inner" v-if="store.isLoading">
+        <div class="overlay__content"><span class="spinner"></span> </div>
+      </div>
       <RouterView />
     </section>
   </div>
 </template>
+
+<style>
+  .overlay {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background: white;
+}
+
+.overlay__inner {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.overlay__content {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.spinner {
+    width: 75px;
+    height: 75px;
+    display: inline-block;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.05);
+    border-top-color: black;
+    animation: spin 1s infinite linear;
+    border-radius: 100%;
+    border-style: solid;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>

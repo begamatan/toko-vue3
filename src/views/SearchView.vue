@@ -8,19 +8,8 @@
         <div class="col mt-3">
           <p>Search result for keyword <strong>{{ q }}</strong> (Total: {{ products.length }})</p>
           <div class="row">
-            <div class="col-3" v-for="product in products" :key="product.id">
-              <div class="card" style="width: 18rem;">
-                <img :src="product.get_image" class="card-img-top" :alt="product.title">
-                <div class="card-body">
-                  <h5 class="card-title">{{ product.title }}</h5>
-                  <p class="card-text">{{ product.description }}</p>
-                  <router-link :to="product.get_absolute_url">
-                    <button class="btn btn-primary">
-                      Detail
-                    </button>
-                  </router-link>
-                </div>
-              </div>
+            <div class="col-sm-3 mt-3 mt-sm-0" v-for="product in products" :key="product.id">
+              <product-card :product="product"></product-card>
             </div>
           </div>
         </div>
@@ -30,8 +19,12 @@
   
   <script>
     import axios from 'axios'
-  
+    import ProductCard from '../components/ProductCard.vue'
+
     export default {
+      components: {
+        ProductCard
+      },
       data() {
         return {
           products: [],

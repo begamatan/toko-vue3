@@ -62,6 +62,10 @@ export const useStore = defineStore('main', {
 
             this.$cookies.set('token', token)
             this.$cookies.set('username', username)
+        },
+
+        setLoading(load) {
+            this.isLoading = load
         }
     }
 })
